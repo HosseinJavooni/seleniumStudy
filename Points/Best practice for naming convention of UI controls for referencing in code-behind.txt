@@ -1,0 +1,16 @@
+btn --> Button
+cbo --> ComboBox
+chk --> CheckBox
+clb --> CheckedListBox
+grp --> GroupBox
+iml --> ImageList
+lbl --> Label
+lnk --> Hyperlink
+mnu --> Menu
+pbr --> ProgressBar
+pic --> Picture
+pnl --> Panel
+rtb --> RichTextBox
+tmr --> Timer
+tvw --> TreeView
+txt --> TextBox

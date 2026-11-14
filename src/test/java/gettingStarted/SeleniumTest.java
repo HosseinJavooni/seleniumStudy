@@ -4,6 +4,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -23,15 +24,32 @@ public class SeleniumTest {
         ChromeDriverService service =
                 new ChromeDriverService.Builder()
                         .usingDriverExecutable(
-                                Paths.get("drivers", "chromedriver").toFile())
+                                Paths.get("drivers","chromedriver-linux64", "chromedriver").toFile())
                         .build();
 
 
         //1. Create a WebDriver with ChromeDriver object
         //2. Launch the browser
         WebDriver driver = new ChromeDriver(service);
+//        WebDriver driver = new FirefoxDriver(/*service*/);
 
         //3. Navigate to a specific URL
-        driver.navigate().to("https://www.google.com");
+        driver.navigate().to("http://127.0.0.1:8081/#/flight-order-search-0");
+
+        //4. Make browser screen status
+//        driver.manage().window().fullscreen();
+        driver.manage().window().maximize();
+//        driver.manage().window().minimize();
+
+        //5. get the URL from the browser
+        System.out.println("Browser URL:  " + driver.getCurrentUrl());
+        System.out.println("Page source:  " + driver.getPageSource());
+
+        System.out.println("Window handles: " + driver.getWindowHandles());
+
+        //
+//        driver.close();
+
+
     }
 }
