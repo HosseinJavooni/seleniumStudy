@@ -68,17 +68,17 @@ public class FlightOrderSeleniumTestCase {
         // Click the combo box to display the list
         clickById(driver, "flight-audit-crews-3-7");
         selectComboBoxItem(driver, "flight-audit-crews-3-5", "(D)");
-        setAnStringToField(driver, "flight-audit-crews-3-6", "0");
+        setAnStringToField(driver, "flight-audit-crews-3-6", "0", 0);
         clickById(driver, "flight-audit-crews-3-7");
 
         clickById(driver, "flight-audit-crews-2-7");
         selectComboBoxItem(driver, "flight-audit-crews-2-5", "(D)");
-        setAnStringToField(driver, "flight-audit-crews-2-6", "0");
+        setAnStringToField(driver, "flight-audit-crews-2-6", "0", 0);
         clickById(driver, "flight-audit-crews-2-7");
 
         clickById(driver, "flight-audit-crews-1-7");
         selectComboBoxItem(driver, "flight-audit-crews-1-5", "(D)");
-        setAnStringToField(driver, "flight-audit-crews-1-6", "0");
+        setAnStringToField(driver, "flight-audit-crews-1-6", "0", 0);
         clickById(driver, "flight-audit-crews-1-7");
         //
 //        Thread.sleep(5000);
