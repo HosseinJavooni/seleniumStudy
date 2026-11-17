@@ -2,7 +2,6 @@ package utils;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-import static utils.Utils.getRandomNumber;
 import static utils.Utils.sleep;
 
 public class ActionsOnPage {
@@ -23,16 +21,55 @@ public class ActionsOnPage {
         sleep(1);
     }
 
-    public static void selectFromDropDownSearchBoxList(WebDriver driver, String elementId, int index) {
+    public static void selectFromDropDownSearchBoxList(WebDriver driver, String elementId, String sendKey, int index) {
         WebElement textbox = getSpecificElementById(driver, elementId, index);
         textbox.clear();
-        textbox.sendKeys(" ");
+        textbox.sendKeys(sendKey);
         sleep(1);
         Random random = new Random();
-        for(int i=0; i < random.nextInt(100); i++) {
+        int loopCount = random.nextInt(1,100);
+        if(!sendKey.isBlank()){
+            List<String> allOptions = getAllSelectedElementsText(driver, "//*[contains(@id, '" + elementId + "-Option-')]");
+            System.out.println(allOptions);
+            for(String option : allOptions){
+                if(option.contains(sendKey)){
+                    loopCount = option.indexOf(sendKey);
+                }
+            }
+        }
+        System.out.println("loopCount:   " + loopCount);
+
+        for(int i=0; i <= loopCount; i++) {
             textbox.sendKeys(Keys.ARROW_DOWN);
         }
         textbox.sendKeys(Keys.ENTER);
+        sleep(1);
+    }
+
+    public static String getElementValue(WebDriver driver, String elementId, int index) {
+        String value = driver.findElement(
+                By.id(elementId)
+        ).getDomProperty("value");
+
+        System.out.println(value);
+        return value;
+    }
+
+    public static List<WebElement> getAllSelectedElements(WebDriver driver, String xpath) {
+        List<WebElement> selectedElements = driver.findElements(
+//                By.xpath("//input[@id='violationPlates']/preceding-sibling::div[contains(@class,'MuiChip-root')]//span[contains(@class,'MuiChip-label')]")
+                By.xpath(xpath)
+        );
+        return selectedElements;
+    }
+
+    public static List<String> getAllSelectedElementsText(WebDriver driver, String xpath) {
+        List<WebElement> selectedElements = getAllSelectedElements(driver, xpath);
+        List<String> selectedElementTexts = new ArrayList<>();
+        for (WebElement element : selectedElements) {
+            selectedElementTexts.add(element.getText());
+        }
+        return selectedElementTexts;
     }
 
     public static void selectComboBoxItem(WebDriver driver, String elementId, String itemNameContains) throws InterruptedException {
@@ -52,20 +89,50 @@ public class ActionsOnPage {
 
     }
 
-    public static void selectSearchableBoxItem(WebDriver driver, String elementId, int elementIdIndex, int itemIndex) {
-        WebElement element = getSpecificElementById(driver, elementId, elementIdIndex);
+    public static void selectMuiDropdown(WebDriver driver, String elementId, int elementIdIndex, String expectedValue) {
+//        WebElement element = getSpecificElementById(driver, elementId, elementIdIndex);
 //        WebElement dropdown = driver.findElement(By.id("country"));
 
-        Select select = new Select(element);
+//        Select select = new Select(element);
 
 // Select by visible text
 //        select.selectByVisibleText("India");
 //
 //// OR select by value
-//        select.selectByValue("IN");
+//        select.selectByValue("بله");
 
 // OR select by index
-        select.selectByIndex(itemIndex);
+//        select.selectByIndex(itemIndex);
+
+
+            WebDriverWait wait = new WebDriverWait(
+                    driver, Duration.ofSeconds(15)
+            );
+
+            // Open dropdown
+            WebElement dropdown = wait.until(
+                    ExpectedConditions.elementToBeClickable(
+                            By.id(elementId)
+                    )
+            );
+
+            dropdown.click();
+
+//            String expectedValue = "بله";
+
+            // Select required option
+            List<WebElement> options = wait.until(
+//                    ExpectedConditions.elementToBeClickable(
+                    ExpectedConditions.visibilityOfAllElementsLocatedBy(
+                            By.xpath(
+                                    "//*[@role='option' and normalize-space()='"
+                                            + expectedValue + "']"
+                            )
+                    )
+            );
+
+            options.get(elementIdIndex).click();
+
     }
 
     public static void clickById(WebDriver driver, String id)/* throws InterruptedException*/ {
@@ -116,7 +183,6 @@ public class ActionsOnPage {
         if (elementList == null || elementList.isEmpty() || index >= Objects.requireNonNull(elementList).size()) {
             return null;
         }
-
         return elementList.get(index);
     }
 
@@ -220,5 +286,32 @@ public class ActionsOnPage {
             itemValues.add(item.getText());
         }
         return itemValues;
+    }
+
+    public static boolean checkElementContainValue(WebDriver driver, String elementId, String value) {
+        if(getSpecificElementById(driver, elementId, 0) == null){
+            System.err.println("Element with ID: " + elementId + " is null!");
+            return false;
+        }
+        if(!getSpecificElementById(driver, elementId, 0).getText().equals(value)){
+            System.err.println("Search the created record has failed");
+            return false;
+        } else {
+            System.err.println("everything is ok");
+            return true;
+        }
+    }
+
+    public static void printTabTitle(String tabTitle) {
+        System.out.println();
+        for (int i = 0; i < tabTitle.length(); i++) {
+            System.out.print("=");
+        }
+        System.out.println();
+        System.out.println(tabTitle);
+        for (int i = 0; i < tabTitle.length(); i++) {
+            System.out.print("=");
+        }
+        System.out.println();
     }
 }
