@@ -16,12 +16,14 @@ public class OppositeViolationTestCase extends BoEnforcementBaseTestCase {
     Logger logger =  LogManager.getLogger(OppositeViolationTestCase.class);
     @Override
     public void testPage(String endPoint) {
-        WebDriver driver = giveTheDriver(logger, endPoint);
+        WebDriver driver = provideTheDriver(logger, endPoint);
+        logTestCasePageTitle(logger, driver);
+
         clickById(driver, "Create");
         selectFromDropDownSearchBoxList(driver, "violationType", " ", 1);
         String violationTypeText = getSpecificElementById(driver, "violationType", 1).getAttribute("value");
         selectFromDropDownSearchBoxList(driver, "violationType2Set", " ", 0);
-        List<String> violationType2SetTextList = getAllSelectedElementsText(driver, "//span[contains(@class,'MuiChip-label')]/ancestor::div[contains(@class, 'MuiButtonBase-root')]");
+        List<String> violationType2SetTextList = getAllWebElementsTextByTheSameXpath(driver, "//span[contains(@class,'MuiChip-label')]/ancestor::div[contains(@class, 'MuiButtonBase-root')]/following-sibling::input[@id='" + "cameraTypes" + "']");
         Date nowDate = new Date();
         String nowDateString = DateUtils.fromDateToPersianString(nowDate, "yyyy/MM/dd");
         String nowDatePlusOneYearString = DateUtils.fromDateToPersianString(DateUtils.addToDate(nowDate, Calendar.YEAR, 1), "yyyy/MM/dd");

@@ -1,7 +1,5 @@
 package seleniumTests.testCases.boEnforcementTests;
 
-import configs.ProjectKeyValueConfigs;
-import configs.WebDriverGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -19,7 +17,7 @@ public class ViolationTypeSearchTestCase extends BoEnforcementBaseTestCase {
     Logger logger = LogManager.getLogger(ViolationTypeSearchTestCase.class);
     @Override
     public void testPage(String endPoint) {
-        WebDriver driver = WebDriverGenerator.goToTheEndPoint(ProjectKeyValueConfigs.boEnforcementBaseUrl, endPoint);
+        WebDriver driver = provideTheDriver(logger, endPoint);
         logTestCasePageTitle(logger, driver);
 
         clickById(driver, "Create");
@@ -32,7 +30,7 @@ public class ViolationTypeSearchTestCase extends BoEnforcementBaseTestCase {
         selectFromDropDownSearchBoxList(driver, "violationPlates", " ", 0);
         selectFromDropDownSearchBoxList(driver, "violationDeliveries", " ", 0);
 //        getElementValue(driver, "violationDeliveries", 0);
-        List<String> allSelectedElements = getAllSelectedElementsText(driver, "//input[@id='violationDeliveries']/preceding-sibling::div[contains(@class,'MuiChip-root')]//span[contains(@class,'MuiChip-label')]");
+        List<String> allSelectedElements = getAllWebElementsTextByTheSameXpath(driver, "//input[@id='violationDeliveries']/preceding-sibling::div[contains(@class,'MuiChip-root')]//span[contains(@class,'MuiChip-label')]");
         if(!listContains(allSelectedElements, "دوربین")) {
             selectFromDropDownSearchBoxList(driver, "violationDeliveries", "دوربین", 0);
             selectFromDropDownSearchBoxList(driver, "cameraType", " ", 0);
@@ -50,7 +48,7 @@ public class ViolationTypeSearchTestCase extends BoEnforcementBaseTestCase {
 //        System.out.println("now: " + now);
 //        selectFromDropDownSearchBoxList(driver, "cameraType", 0);
 
-        String code = getRandomNumber(10000);
+        String code = getRandomNumber(1, 10000);
         setAnStringToField(driver, "code", code, 0);
         setAnStringToField(driver, "violationType", "نوع تخلف" + code, 0);
         setAnStringToField(driver, "briefTitle", "عنوان مختصر" + code, 0);

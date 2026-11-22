@@ -1,16 +1,14 @@
 package utils;
 
 import org.openqa.selenium.*;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
-import static utils.Utils.sleep;
+import static utils.Utils.*;
 
 public class ActionsOnPage {
 
@@ -22,29 +20,79 @@ public class ActionsOnPage {
     }
 
     public static void selectFromDropDownSearchBoxList(WebDriver driver, String elementId, String sendKey, int index) {
+        selectExactValueFromDropDownSearchBoxList(driver, elementId, sendKey, false, index);
+    }
+
+    public static void selectExactValueFromDropDownSearchBoxList(WebDriver driver, String elementId, String sendKey, boolean isSentKeyTheWholeValue, int index) {
+        WebElement textbox = openADropDownSearchBoxList(driver, elementId, sendKey, index);
+        List<String> allOptions = getAllWebElementsTextByTheSameXpath(driver, "//*[contains(@id, '" + elementId + "-Option-')]");
+        Random random = new Random();
+        int loopCount = random.nextInt(0, allOptions.size() + 1);
+        if (!sendKey.isBlank()) {
+            System.out.println(allOptions);
+            for (String option : allOptions) {
+                if (option.contains(sendKey)) {
+                    if (determineStringContainsOrEqualsToAnotherString(option, sendKey, isSentKeyTheWholeValue)) {
+                        loopCount = allOptions.indexOf(sendKey);
+                    }
+                }
+            }
+            System.out.println("loopCount:   " + loopCount);
+
+//        for(int i=0; i <= loopCount; i++) {
+//            textbox.sendKeys(Keys.ARROW_DOWN);
+//        }
+//        textbox.sendKeys(Keys.ENTER);
+        }
+        sendArrowDownAndEnterKeysToWebElement(textbox, loopCount);
+        sleep(1);
+    }
+
+    public static WebElement openADropDownSearchBoxList(WebDriver driver, String elementId, String sendKey, int index) {
         WebElement textbox = getSpecificElementById(driver, elementId, index);
         textbox.clear();
         textbox.sendKeys(sendKey);
         sleep(1);
-        Random random = new Random();
-        int loopCount = random.nextInt(1,100);
-        if(!sendKey.isBlank()){
-            List<String> allOptions = getAllSelectedElementsText(driver, "//*[contains(@id, '" + elementId + "-Option-')]");
-            System.out.println(allOptions);
-            for(String option : allOptions){
-                if(option.contains(sendKey)){
-                    loopCount = option.indexOf(sendKey);
-                }
-            }
-        }
-        System.out.println("loopCount:   " + loopCount);
-
-        for(int i=0; i <= loopCount; i++) {
-            textbox.sendKeys(Keys.ARROW_DOWN);
-        }
-        textbox.sendKeys(Keys.ENTER);
-        sleep(1);
+        return textbox;
     }
+
+    public static void selectNextEntryInDropDownList(WebDriver driver, String elementId, int index) {
+        WebElement dropDownList = openADropDownSearchBoxList(driver, elementId,   " ", index);
+        dropDownList.sendKeys(Keys.ARROW_DOWN);
+        dropDownList.sendKeys(Keys.ENTER);
+    }
+
+    public static void sendArrowDownAndEnterKeysToWebElement(WebElement webElement, int arrowKeyCount) {
+        for(int i=0; i <= arrowKeyCount; i++) {
+            webElement.sendKeys(Keys.ARROW_DOWN);
+        }
+        webElement.sendKeys(Keys.ENTER);
+    }
+
+    public static Map<WebElement, List<String>> getAllItemsOfDropDownSearchBoxList(WebDriver driver, String elementId, int index) {
+        WebElement textbox = openADropDownSearchBoxList(driver, elementId, " ", index);
+        Map<WebElement, List<String>> map = new HashMap<>();
+        map.put(textbox, getAllWebElementsTextByTheSameXpath(driver, "//*[contains(@id, '" + elementId + "-Option-')]"));
+        return map;
+    }
+
+//    public static void selectADifferentItemInDropDownSearchBoxList(WebDriver driver, String elementId, String previouslySelected, int index) {
+//        Map<WebElement, List<String>> webElementListMap = getAllItemsOfDropDownSearchBoxList(driver, elementId, index);
+//        if(webElementListMap.isEmpty()){
+//            return;
+//        }
+//        List<String> allItemsOfDropDownSearchBoxList = webElementListMap.values().iterator().next();
+//        WebElement textbox = webElementListMap.keySet().iterator().next();
+//        int firstDifferentItemIndex = 0;
+//        for(String option : allItemsOfDropDownSearchBoxList){
+//            if(!option.contains(previouslySelected)){
+//                firstDifferentItemIndex = allItemsOfDropDownSearchBoxList.indexOf(option);
+//                break;
+//            }
+//        }
+////        WebElement textbox = getSpecificElementById(driver, elementId, index);
+//        sendArrowDownAndEnterKeysToWebElement(textbox,  firstDifferentItemIndex);
+//    }
 
     public static String getElementValue(WebDriver driver, String elementId, int index) {
         String value = driver.findElement(
@@ -55,7 +103,7 @@ public class ActionsOnPage {
         return value;
     }
 
-    public static List<WebElement> getAllSelectedElements(WebDriver driver, String xpath) {
+    public static List<WebElement> getAllWebElementsByTheSameXpath(WebDriver driver, String xpath) {
         List<WebElement> selectedElements = driver.findElements(
 //                By.xpath("//input[@id='violationPlates']/preceding-sibling::div[contains(@class,'MuiChip-root')]//span[contains(@class,'MuiChip-label')]")
                 By.xpath(xpath)
@@ -63,13 +111,25 @@ public class ActionsOnPage {
         return selectedElements;
     }
 
-    public static List<String> getAllSelectedElementsText(WebDriver driver, String xpath) {
-        List<WebElement> selectedElements = getAllSelectedElements(driver, xpath);
+    public static List<String> getAllWebElementsTextByTheSameXpath(WebDriver driver, String xpath) {
+        List<WebElement> selectedElements = getAllWebElementsByTheSameXpath(driver, xpath);
         List<String> selectedElementTexts = new ArrayList<>();
         for (WebElement element : selectedElements) {
             selectedElementTexts.add(element.getText());
         }
         return selectedElementTexts;
+    }
+
+    public static List<String> getMultiValuesSelectedInputItemsById(WebDriver driver, String elementId) {
+        return getAllWebElementsTextByTheSameXpath(driver, "//span[contains(@class,'MuiChip-label')]/ancestor::div[contains(@class, 'MuiButtonBase-root')]/following-sibling::input[@id='" + elementId + "']");
+    }
+
+    public static String getInputWebElementValueById(WebDriver driver, String elementId) {
+        List<WebElement> selectedElements = getAllWebElementsByTheSameXpath(driver, "//input[@id='" + elementId + "']");
+        if(selectedElements.isEmpty()) {
+            return "";
+        }
+        return selectedElements.getFirst().getAttribute("value");
     }
 
     public static void selectComboBoxItem(WebDriver driver, String elementId, String itemNameContains) throws InterruptedException {
@@ -293,7 +353,7 @@ public class ActionsOnPage {
             System.err.println("Element with ID: " + elementId + " is null!");
             return false;
         }
-        if(!getSpecificElementById(driver, elementId, 0).getText().equals(value)){
+        if(!normalizePersianCharacters(getSpecificElementById(driver, elementId, 0).getText()).equals(normalizePersianCharacters(value))){
             System.err.println("Search the created record has failed");
             return false;
         } else {

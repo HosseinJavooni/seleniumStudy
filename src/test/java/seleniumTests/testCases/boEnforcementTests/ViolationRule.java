@@ -15,9 +15,11 @@ public class ViolationRule extends BoEnforcementBaseTestCase{
     Logger logger = LogManager.getLogger(ViolationRule.class);
     @Override
     public void testPage(String endPoint) {
-        WebDriver driver = giveTheDriver(logger, endPoint);
+        WebDriver driver = provideTheDriver(logger, endPoint);
+        logTestCasePageTitle(logger, driver);
+
         clickById(driver,"Create");
-        String code = getRandomNumber(1000000);
+        String code = getRandomNumber(1, 1000000);
         setAnStringToField(driver, "title", "عنوان تستی" + code, 0);
         Date nowDate = new Date();
         String nowDateString = DateUtils.fromDateToPersianString(nowDate, "yyyy/MM/dd");

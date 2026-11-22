@@ -9,9 +9,9 @@ import java.util.Random;
 
 public class Utils {
 
-    public static String getRandomNumber(int limit){
+    public static String getRandomNumber(int lowerLimit, int upperLimit){
         Random random = new Random();
-        return String.valueOf(random.nextInt(limit));
+        return String.valueOf(random.nextInt(lowerLimit, upperLimit));
     }
 
     public static void sleep(int seconds){
@@ -61,5 +61,15 @@ public class Utils {
             return input.split(splitPattern)[0];
         }
         return input;
+    }
+
+    public static boolean determineStringContainsOrEqualsToAnotherString(String mainString, String inputString, boolean isEquals) {
+        if (mainString == null || inputString == null) {
+            return false;
+        }
+        if (isEquals) {
+            return mainString.equals(inputString);
+        }
+        return mainString.contains(inputString);
     }
 }

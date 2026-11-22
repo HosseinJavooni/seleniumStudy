@@ -9,21 +9,22 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static utils.ActionsOnPage.getAllSelectedElements;
+import static utils.ActionsOnPage.getAllWebElementsByTheSameXpath;
 import static utils.Utils.sleep;
 
 public abstract class BoEnforcementBaseTestCase implements BaseTestCase {
     @Override
     public void logTestCasePageTitle(Logger logger, WebDriver driver) {
         sleep(1);
-        List<WebElement> allSelectedElements = getAllSelectedElements(driver, "//p[contains(@class,'Toolbar-Title')]");
+        List<WebElement> allSelectedElements = getAllWebElementsByTheSameXpath(driver, "//p[contains(@class,'Toolbar-Title')]");
         if (!allSelectedElements.isEmpty()) {
             logger.info("Page title:  " + allSelectedElements.getFirst().getText().replace("جستجوی ", "" ) + "\n" + "Page Url:  " + driver.getCurrentUrl());
         } else {
             logger.info("Page Url:  " + driver.getCurrentUrl());
         }
     }
-    protected WebDriver giveTheDriver(Logger logger, String endPoint) {
+    @Override
+    public WebDriver provideTheDriver(Logger logger, String endPoint) {
         WebDriver driver = WebDriverGenerator.goToTheEndPoint(ProjectKeyValueConfigs.boEnforcementBaseUrl, endPoint);
         logTestCasePageTitle(logger, driver);
         sleep(1);

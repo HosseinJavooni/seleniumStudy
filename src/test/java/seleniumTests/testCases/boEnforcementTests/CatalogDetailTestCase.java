@@ -14,11 +14,12 @@ public class CatalogDetailTestCase extends BoEnforcementBaseTestCase {
     private static final Logger logger = LogManager.getLogger(CatalogDetailTestCase.class);
     @Override
     public void testPage(String endPoint) {
-        WebDriver driver = giveTheDriver(logger, endPoint);
+        WebDriver driver = provideTheDriver(logger, endPoint);
+        logTestCasePageTitle(logger, driver);
 
         clickById(driver, "Create");
         selectFromDropDownSearchBoxList(driver, "catalog", " ", 1);
-        String code = getRandomNumber(1000000);
+        String code = getRandomNumber(1, 1000000);
         setAnStringToField(driver, "usedCode", code, 1);
         setAnStringToField(driver, "title",  "عنوان تستی سلنیوم "  + toPersianNumber(code), 1);
         clickById(driver, "Save");
