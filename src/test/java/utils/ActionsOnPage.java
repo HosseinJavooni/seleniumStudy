@@ -1,5 +1,7 @@
 package utils;
 
+import configs.ProjectKeyValueConfigs;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -19,15 +21,17 @@ public class ActionsOnPage {
         sleep(1);
     }
 
-    public static void selectFromDropDownSearchBoxList(WebDriver driver, String elementId, String sendKey, int index) {
-        selectExactValueFromDropDownSearchBoxList(driver, elementId, sendKey, false, index);
+    public static void selectFromDropDownSearchBoxList(WebDriver driver, String elementId, String sendKey, Logger logger, int index) {
+        selectExactValueFromDropDownSearchBoxList(driver, elementId, sendKey, false, logger, index);
     }
 
-    public static void selectExactValueFromDropDownSearchBoxList(WebDriver driver, String elementId, String sendKey, boolean isSentKeyTheWholeValue, int index) {
+    public static void selectExactValueFromDropDownSearchBoxList(WebDriver driver, String elementId, String sendKey, boolean isSentKeyTheWholeValue, Logger logger, int index) {
+        String elementTitle = getElementById(driver, elementId + "-label").getText();
+        logger.info("Element title: " + elementTitle);
         WebElement textbox = openADropDownSearchBoxList(driver, elementId, sendKey, index);
         List<String> allOptions = getAllWebElementsTextByTheSameXpath(driver, "//*[contains(@id, '" + elementId + "-Option-')]");
         Random random = new Random();
-        int loopCount = random.nextInt(0, allOptions.size() + 1);
+        int loopCount = random.nextInt(0, allOptions.isEmpty() ? 1 : allOptions.size());
         if (!sendKey.isBlank()) {
             System.out.println(allOptions);
             for (String option : allOptions) {
@@ -45,6 +49,13 @@ public class ActionsOnPage {
 //        textbox.sendKeys(Keys.ENTER);
         }
         sendArrowDownAndEnterKeysToWebElement(textbox, loopCount);
+        if(!getInputWebElementValueById(driver, elementId).isBlank()) {
+            logger.info("The element [" +  elementTitle + "] is filled with: \n " + allOptions.get(loopCount));
+        } else {
+            if(elementTitle.contains("*")) {
+                logger.error("The element [" +  elementTitle + "] is mandatory!");
+            }
+        }
         sleep(1);
     }
 
@@ -146,7 +157,6 @@ public class ActionsOnPage {
                 break;
             }
         }
-
     }
 
     public static void selectMuiDropdown(WebDriver driver, String elementId, int elementIdIndex, String expectedValue) {
@@ -256,98 +266,6 @@ public class ActionsOnPage {
         return  webElement;
     }
 
-    public static void findComboBoxItems(WebDriver driver, String elementId, String itemNameContains) {
-        WebElement specificElementById = getSpecificElementById(driver, elementId, 1);
-        specificElementById.click();
-        specificElementById.sendKeys(" ");
-
-        WebDriverWait wait = new WebDriverWait(
-                driver, Duration.ofSeconds(10)
-        );
-
-        By optionLocator = By.xpath(
-//                "//*[normalize-space()='" + itemNameContains + "']"
-                "//ul/li" + itemNameContains + "']"
-        );
-
-        WebElement option = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        optionLocator
-                )
-        );
-
-        option.click();
-
-//        Thread.sleep(2000);
-    }
-
-    public static void selectDropdownItem(
-            WebDriver driver,
-            By searchBoxLocator,
-            String expectedValue
-    ) {
-
-        WebDriverWait wait = new WebDriverWait(
-                driver, Duration.ofSeconds(10)
-        );
-
-        WebElement searchBox = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        searchBoxLocator
-                )
-        );
-
-        searchBox.click();
-        searchBox.sendKeys(" ");
-
-        By optionLocator = By.xpath(
-                "//*[normalize-space(text())='"+ expectedValue + "']"
-        );
-
-        WebElement option = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        optionLocator
-                )
-        );
-
-        option.click();
-    }
-
-    public static void selectDropdownItem(WebDriver driver, String id, String attributeName, String attributeValue) {
-        WebElement element = driver.findElement(
-                By.id(id)
-        );
-        element.clear();
-
-        JavascriptExecutor js =
-                (JavascriptExecutor) driver;
-
-        js.executeScript(
-                "arguments[0].setAttribute('"+ attributeName +"', '"+ attributeValue +"');" ,
-                element
-        );
-    }
-
-    public static List<String> getDropdownValue(WebDriver driver, String id) {
-        WebElement searchBox = driver.findElement(By.id(id));
-
-        searchBox.sendKeys(" ");
-        sleep(5);
-// Wait until dropdown items are displayed
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
-
-        List<WebElement> items = wait.until(
-                ExpectedConditions.visibilityOfAllElementsLocatedBy(
-                        By.xpath("//ul/li")
-                )
-        );
-        List<String> itemValues = new ArrayList<>();
-        for (WebElement item : items) {
-            itemValues.add(item.getText());
-        }
-        return itemValues;
-    }
-
     public static boolean checkElementContainValue(WebDriver driver, String elementId, String value) {
         if(getSpecificElementById(driver, elementId, 0) == null){
             System.err.println("Element with ID: " + elementId + " is null!");
@@ -362,16 +280,60 @@ public class ActionsOnPage {
         }
     }
 
-    public static void printTabTitle(String tabTitle) {
-        System.out.println();
-        for (int i = 0; i < tabTitle.length(); i++) {
-            System.out.print("=");
+    public static boolean checkUrlIsOk(WebDriver driver, String url) {
+        if(driver == null || url.isEmpty()){
+            return false;
         }
-        System.out.println();
-        System.out.println(tabTitle);
-        for (int i = 0; i < tabTitle.length(); i++) {
-            System.out.print("=");
-        }
-        System.out.println();
+        return driver.getCurrentUrl().equals(url);
     }
+
+    public static boolean isFilled(WebDriver driver, String elementId) {
+        return getInputWebElementValueById(driver, elementId).isEmpty();
+    }
+
+    public static void deleteAllMultiSelectedInputValues(WebDriver driver, String elementId) {
+        List<WebElement> elements = getAllWebElementsByTheSameXpath(driver, "//div[contains(@class, 'MuiAutocomplete-root')]/descendant::input[@id='" + elementId + "']/preceding-sibling::div");
+        boolean criteria = checkMultiSelectInputContainsValues(driver, elementId);
+        while (criteria) {
+            for (WebElement element : elements) {
+                List<WebElement> children = element.findElements(By.tagName("svg"));
+                if (!children.isEmpty()) {
+                    sleep(1);
+                    children.get(0).click();
+                    break;
+                }
+            }
+            criteria = checkMultiSelectInputContainsValues(driver, elementId);
+        }
+    }
+
+    public static List<String> getAllMultiSelectedInputValues(WebDriver driver, String elementId) {
+        List<WebElement> elements = getAllWebElementsByTheSameXpath(driver, "//div[contains(@class, 'MuiAutocomplete-root')]/descendant::input[@id='" + elementId + "']/preceding-sibling::div");
+        List<String> result = new ArrayList<>();
+        for (WebElement element : elements) {
+            List<WebElement> children = element.findElements(By.tagName("span"));
+            if (!children.isEmpty()) {
+                if(!children.get(0).getText().isBlank()) {
+                    result.add(children.get(0).getText());
+                }
+            }
+        }
+        return result;
+    }
+
+    public static boolean checkMultiSelectInputContainsValues(WebDriver driver, String elementId) {
+        List<WebElement> elements = getAllWebElementsByTheSameXpath(driver, "//div[contains(@class, 'MuiAutocomplete-root')]/descendant::input[@id='" + elementId + "']/preceding-sibling::div");
+        boolean criteria = false;
+        if (!elements.isEmpty()) {
+            for (WebElement element : elements) {
+                List<WebElement> children = element.findElements(By.tagName("svg"));
+                if (!children.isEmpty()) {
+                    criteria = true;
+                    break;
+                }
+            }
+        }
+        return criteria;
+    }
+
 }

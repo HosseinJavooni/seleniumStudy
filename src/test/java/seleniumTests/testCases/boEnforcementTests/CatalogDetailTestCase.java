@@ -18,7 +18,7 @@ public class CatalogDetailTestCase extends BoEnforcementBaseTestCase {
         logTestCasePageTitle(logger, driver);
 
         clickById(driver, "Create");
-        selectFromDropDownSearchBoxList(driver, "catalog", " ", 1);
+        selectFromDropDownSearchBoxList(driver, "catalog", " ", logger, 1);
         String code = getRandomNumber(1, 1000000);
         setAnStringToField(driver, "usedCode", code, 1);
         setAnStringToField(driver, "title",  "عنوان تستی سلنیوم "  + toPersianNumber(code), 1);

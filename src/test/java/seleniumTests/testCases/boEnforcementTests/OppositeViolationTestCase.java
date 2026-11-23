@@ -20,9 +20,9 @@ public class OppositeViolationTestCase extends BoEnforcementBaseTestCase {
         logTestCasePageTitle(logger, driver);
 
         clickById(driver, "Create");
-        selectFromDropDownSearchBoxList(driver, "violationType", " ", 1);
+        selectFromDropDownSearchBoxList(driver, "violationType", " ", logger, 1);
         String violationTypeText = getSpecificElementById(driver, "violationType", 1).getAttribute("value");
-        selectFromDropDownSearchBoxList(driver, "violationType2Set", " ", 0);
+        selectFromDropDownSearchBoxList(driver, "violationType2Set", " ", logger, 0);
         List<String> violationType2SetTextList = getAllWebElementsTextByTheSameXpath(driver, "//span[contains(@class,'MuiChip-label')]/ancestor::div[contains(@class, 'MuiButtonBase-root')]/following-sibling::input[@id='" + "cameraTypes" + "']");
         Date nowDate = new Date();
         String nowDateString = DateUtils.fromDateToPersianString(nowDate, "yyyy/MM/dd");
@@ -33,11 +33,11 @@ public class OppositeViolationTestCase extends BoEnforcementBaseTestCase {
 
 //        selectFromDropDownSearchBoxList(driver, "violationType", violationTypeText.substring(0, violationTypeText.indexOf(":")), 0);
 
-        selectFromDropDownSearchBoxList(driver, "violationType", getFirstPartAfterSplitString(violationTypeText, ":"), 0);
+        selectFromDropDownSearchBoxList(driver, "violationType", getFirstPartAfterSplitString(violationTypeText, ":"), logger, 0);
         System.out.println("violationTypeText: (at search)   " + violationTypeText);
         System.out.println("getFirstPartAfterSplitString(violationTypeText, \":\"): (at search)   " + getFirstPartAfterSplitString(violationTypeText, ":"));
 //        selectFromDropDownSearchBoxList(driver, "violationType2", violationType2SetTextList.getFirst().substring(0, violationTypeText.indexOf(":")), 0);
-        selectFromDropDownSearchBoxList(driver, "violationType2", getFirstPartAfterSplitString(violationType2SetTextList.getFirst(), ":"), 0);
+        selectFromDropDownSearchBoxList(driver, "violationType2", getFirstPartAfterSplitString(violationType2SetTextList.getFirst(), ":"), logger, 0);
         System.out.println("violationTypeText: (at search)   " + violationType2SetTextList.getFirst());
         System.out.println("getFirstPartAfterSplitString(violationType2SetTextList.getFirst(), \":\"): (at search)   " + getFirstPartAfterSplitString(violationType2SetTextList.getFirst(), ":"));
         clickById(driver, "Search");

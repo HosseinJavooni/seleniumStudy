@@ -26,12 +26,12 @@ public class ViolationRule extends BoEnforcementBaseTestCase{
         String nowDatePlusOneYearString = DateUtils.fromDateToPersianString(DateUtils.addToDate(nowDate, Calendar.YEAR, 1), "yyyy/MM/dd");
         setAnStringToField(driver, "startDate", nowDateString, 0);
         setAnStringToField(driver, "endDate", nowDatePlusOneYearString, 0);
-        selectFromDropDownSearchBoxList(driver, "violationType", " ", 0);
-        selectFromDropDownSearchBoxList(driver, "axis", " ", 0);
-        selectFromDropDownSearchBoxList(driver, "cameraType", " ", 0);
-        selectFromDropDownSearchBoxList(driver, "geoUnit", " ", 0);
-        selectFromDropDownSearchBoxList(driver, "camera", " ", 0);
-        selectFromDropDownSearchBoxList(driver, "organization", " ", 0);
+        selectFromDropDownSearchBoxList(driver, "violationType", " ", logger, 0);
+        selectFromDropDownSearchBoxList(driver, "axis", " ", logger, 0);
+        selectFromDropDownSearchBoxList(driver, "cameraType", " ", logger, 0);
+        selectFromDropDownSearchBoxList(driver, "geoUnit", " ", logger, 0);
+        selectFromDropDownSearchBoxList(driver, "camera", " ", logger, 0);
+        selectFromDropDownSearchBoxList(driver, "organization", " ", logger, 0);
         clickById(driver, "Save");
 
         setAnStringToField(driver, "title", "عنوان تستی" + code, 0);

@@ -26,20 +26,20 @@ public class ViolationTypeSearchTestCase extends BoEnforcementBaseTestCase {
         selectMuiDropdown(driver, "isNegpoint", 0, "بله");
         selectMuiDropdown(driver, "isDangerous", 0, "بله");
         selectMuiDropdown(driver, "isCountable", 0, "بله");
-        selectFromDropDownSearchBoxList(driver, "isInternal", " ", 0);
-        selectFromDropDownSearchBoxList(driver, "violationPlates", " ", 0);
-        selectFromDropDownSearchBoxList(driver, "violationDeliveries", " ", 0);
+        selectFromDropDownSearchBoxList(driver, "isInternal", " ", logger, 0);
+        selectFromDropDownSearchBoxList(driver, "violationPlates", " ", logger, 0);
+        selectFromDropDownSearchBoxList(driver, "violationDeliveries", " ", logger, 0);
 //        getElementValue(driver, "violationDeliveries", 0);
         List<String> allSelectedElements = getAllWebElementsTextByTheSameXpath(driver, "//input[@id='violationDeliveries']/preceding-sibling::div[contains(@class,'MuiChip-root')]//span[contains(@class,'MuiChip-label')]");
         if(!listContains(allSelectedElements, "دوربین")) {
-            selectFromDropDownSearchBoxList(driver, "violationDeliveries", "دوربین", 0);
-            selectFromDropDownSearchBoxList(driver, "cameraType", " ", 0);
-            selectFromDropDownSearchBoxList(driver, "policeType", " ", 0);
+            selectFromDropDownSearchBoxList(driver, "violationDeliveries", "دوربین", logger, 0);
+            selectFromDropDownSearchBoxList(driver, "cameraType", " ", logger, 0);
+            selectFromDropDownSearchBoxList(driver, "policeType", " ", logger, 0);
         } else {
-            selectFromDropDownSearchBoxList(driver, "cameraType", " ", 0);
+            selectFromDropDownSearchBoxList(driver, "cameraType", " ", logger, 0);
         }
 
-        selectFromDropDownSearchBoxList(driver, "vehicleUsage", " ", 0);
+        selectFromDropDownSearchBoxList(driver, "vehicleUsage", " ", logger, 0);
         Date nowDate = new Date();
         String nowDateString = DateUtils.fromDateToPersianString(nowDate, "yyyy/MM/dd");
         String nowDatePlusOneYearString = DateUtils.fromDateToPersianString(DateUtils.addToDate(nowDate, Calendar.YEAR, 1), "yyyy/MM/dd");
