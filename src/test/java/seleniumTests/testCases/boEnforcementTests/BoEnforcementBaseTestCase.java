@@ -26,7 +26,7 @@ public abstract class BoEnforcementBaseTestCase implements BaseTestCase {
     @Override
     public WebDriver provideTheDriver(Logger logger, String endPoint) {
         WebDriver driver = WebDriverGenerator.goToTheEndPoint(ProjectKeyValueConfigs.boEnforcementBaseUrl, endPoint);
-        logTestCasePageTitle(logger, driver);
+//        logTestCasePageTitle(logger, driver);
         sleep(1);
         return driver;
     }

@@ -3,10 +3,9 @@ package seleniumTests;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seleniumTests.testCases.boEnforcementTests.*;
+import seleniumTests.testCases.boEnforcementTests.cameraTestPackage.CameraTestCase;
 
 import java.util.Scanner;
-
-import static configs.WebDriverGenerator.closeDriver;
 
 public class BoEnforcementTestClass {
     private static final Logger logger = LogManager.getLogger(BoEnforcementTestClass.class);

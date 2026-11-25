@@ -56,6 +56,10 @@ public class Utils {
          return input.replace("ي", "ی");
     }
 
+    public static boolean equalsWithNormalizedPersianCharacters(String firstEntry, String secondEntry) {
+        return normalizePersianCharacters(firstEntry).equals(normalizePersianCharacters(secondEntry));
+    }
+
     public static String getFirstPartAfterSplitString(String input, String splitPattern) {
         if (input != null && input.contains(splitPattern)) {
             return input.split(splitPattern)[0];
